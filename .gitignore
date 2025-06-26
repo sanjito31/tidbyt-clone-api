@@ -3,3 +3,5 @@ __pycache__
 .venv
 gtfs_subway
 test.py
+*.txt
+.idea/
