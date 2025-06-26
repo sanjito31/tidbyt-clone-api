@@ -14,10 +14,10 @@ def get_weather():
     resp = requests.get(openWeatherURL)
     weather = resp.json()
 
-    return {"weather": {
+    return {
         "temp": str(round(weather["main"]["temp"])),
         "feels_like": str(round(weather["main"]["feels_like"])),
         "temp_max": str(round(weather["main"]["temp_max"])),
         "temp_min": str(round(weather["main"]["temp_min"])),
         "description": str(weather["weather"][0]["description"])
-    }}
+    }
