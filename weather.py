@@ -7,11 +7,11 @@ load_dotenv()
 def get_weather():
     lat = os.getenv('LAT')
     lon = os.getenv('LON')
-    openWeatherAPIKey = os.getenv('OPEN_WEATHER_API_KEY')
+    api_key = os.getenv('OPEN_WEATHER_API_KEY')
 
-    openWeatherURL = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={openWeatherAPIKey}&units=imperial"
+    open_weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=imperial"
 
-    resp = requests.get(openWeatherURL)
+    resp = requests.get(open_weather_url)
     weather = resp.json()
 
     return {

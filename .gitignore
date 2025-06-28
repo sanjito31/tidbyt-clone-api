@@ -5,3 +5,5 @@ gtfs_subway
 test.py
 *.txt
 .idea/
+.spotify_tokens.json
+graveyard.py
