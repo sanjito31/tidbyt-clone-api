@@ -12,7 +12,7 @@ CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 B64_CLIENT_SECRET = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode("UTF-8")).decode("UTF-8")
 REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
 USER_AUTH_TOKEN = os.getenv("USER_AUTH_TOKEN")
-# STATE = secrets.token_hex(8)
+# STATE = secrets.token_hex(8) #deprecated; now using api endpoint as state to maintain target across redirect
 SCOPE = "user-library-read, user-read-currently-playing"
 
 def load_tokens() -> dict:
@@ -32,20 +32,25 @@ def save_tokens(data):
         json.dump(data, f)
     return
 
+# Returning None triggers getting a new user auth, otherwise return valid user auth token
 def get_valid_user_token():
     tokens = load_tokens()
     now = time.time()
     if not tokens["access_token"]:
-        # new login
         return None
-        # get_user_authorization()
-        # tokens = load_tokens()
     elif now > tokens["expires_at"]:
         # refresh token
-        data = refresh_token(tokens["refresh_token"])
-        save_tokens(data["details"])
-        tokens = load_tokens()
-    return tokens["access_token"]
+        resp = refresh_token(tokens["refresh_token"])
+        if resp["status"] != "success":
+            return None
+        data = resp["details"]
+        if data.get("refresh_token") is None:
+            data["refresh_token"] = tokens["refresh_token"]
+        save_tokens(data)
+        tokens["access_token"] = data["access_token"]
+        tokens["expires_at"] = data["expires_at"]
+        tokens["refresh_token"] = data["refresh_token"]
+    return tokens.get("access_token")
 
 def get_user_authorization(state: str):
     params = {
@@ -72,14 +77,6 @@ def callback(request: Request) -> dict:
                 "status_code": "401"
             }
         }
-    # if state != STATE:
-    #     return {
-    #         "status": "error",
-    #         "details": {
-    #             "message": "Invalid State",
-    #             "status_code": "403"
-    #         }
-    #     }
 
     params = {
         "code": code,
@@ -111,16 +108,6 @@ def callback(request: Request) -> dict:
 
 def get_currently_playing(token):
 
-    # user_auth_token = await get_valid_user_token()
-    #
-    # if type(user_auth_token) is RedirectResponse:
-    #     return {
-    #         "status": "error",
-    #         "details": {
-    #             "message": "Complete Login"
-    #         }
-    #     }
-    # else:
     header = {
         "Authorization": f"Bearer {token}"
     }
@@ -157,6 +144,6 @@ def refresh_token(ref_tok: str) -> dict:
         "details": {
             "access_token": data["access_token"],
             "expires_at": expires_at,
-            "refresh_token": data["refresh_token"]
+            "refresh_token": data.get("refresh_token") # in case response does not include refresh token
         }
     }

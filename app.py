@@ -29,12 +29,12 @@ def spotify_playing():
         return spotify.get_currently_playing(token=token)
 
 
-@app.get("api/f1/drivers")
+@app.get("/api/f1/drivers")
 def f1_drivers():
     return f1.get_driver_standings()
 
 
-@app.get("api/f1/constructors")
+@app.get("/api/f1/constructors")
 def f1_constructors():
     return f1.get_constructor_standings()
 

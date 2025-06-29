@@ -5,4 +5,4 @@ gtfs_subway
 *.txt
 .idea/
 .spotify_tokens.json
-bin
+misc
