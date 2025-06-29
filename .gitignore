@@ -2,8 +2,7 @@
 __pycache__
 .venv
 gtfs_subway
-test.py
 *.txt
 .idea/
 .spotify_tokens.json
-graveyard.py
+bin

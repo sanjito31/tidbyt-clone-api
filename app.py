@@ -4,6 +4,7 @@ from starlette.responses import RedirectResponse
 import spotify
 from mta import getMTA_realtime
 from weather import get_weather
+import f1
 
 app = FastAPI()
 
@@ -28,19 +29,14 @@ def spotify_playing():
         return spotify.get_currently_playing(token=token)
 
 
-    # if spotify.USER_AUTH_TOKEN is None:
-    #     return RedirectResponse("/spotify/login", status_code=302)
-    # else:
-    #     header = {
-    #         "Authorization": f"Bearer {spotify.USER_AUTH_TOKEN}"
-    #     }
-    #
-    #     response =  requests.get("https://api.spotify.com/v1/me/player/currently-playing", headers=header)
-    #     return response.json()
+@app.get("api/f1/drivers")
+def f1_drivers():
+    return f1.get_driver_standings()
 
-# @app.get("/spotify/login")
-# def spotify_login():
-#     return spotify.get_user_authorization()
+
+@app.get("api/f1/constructors")
+def f1_constructors():
+    return f1.get_constructor_standings()
 
 @app.get("/spotify/callback")
 def callback(request: Request):
@@ -53,3 +49,4 @@ def callback(request: Request):
         spotify.save_tokens(resp["details"])
 
     return RedirectResponse(f"/api/spotify/{resp["state"]}")
+
