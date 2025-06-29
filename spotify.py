@@ -1,5 +1,7 @@
 import urllib.parse
 import os, json, time, base64, requests
+from xmlrpc.client import MAXINT
+
 from fastapi import Request
 from dotenv import load_dotenv
 from starlette.responses import RedirectResponse
@@ -119,7 +121,23 @@ def get_currently_playing(token):
         return {
             "message": "nothing is currently playing"
         }
-    return response.json()
+
+    # return response.json()
+    info = response.json()
+
+    # thumbnails = info["item"]["album"]["images"]
+    # smallest = min(info["item"]["album"]["images"], key=lambda img: img["height"])["url"]
+    # thumb_url = smallest["url"]
+
+
+    return {
+        "title": info["item"]["name"],
+        "artists": [artist["name"] for artist in info["item"]["artists"]],
+        "album": info["item"]["album"]["name"],
+        "progress_ms": info["progress_ms"],
+        "duration_ms": info["item"]["duration_ms"],
+        "url": min(info["item"]["album"]["images"], key=lambda img: img["height"])["url"]
+    }
 
 def refresh_token(ref_tok: str) -> dict:
     params = {

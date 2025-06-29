@@ -26,7 +26,11 @@ def spotify_playing():
         ## kick off auth protocol
         return spotify.get_user_authorization(state=state)
     else:
-        return spotify.get_currently_playing(token=token)
+        return {
+            "spotify": {
+                "currently_playing": spotify.get_currently_playing(token=token)
+            }
+        }
 
 
 @app.get("/api/f1/drivers")
