@@ -1,7 +1,6 @@
 import requests, json
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
-
 def get_driver_standings():
 
     wdc = { "f1_drivers": [] }
@@ -20,9 +19,6 @@ def get_driver_standings():
             "team": driver["Constructors"][0]["name"]
         })
 
-    # with open("f1_drivers.json", "w") as f:
-    #     json.dump(wdc, f, indent=4)
-
     return wdc
 
 def get_constructor_standings():
@@ -39,8 +35,3 @@ def get_constructor_standings():
         })
 
     return wcc
-
-wcc_data = get_constructor_standings()
-
-with open("bin/constructor_standings.json", "w") as f:
-    json.dump(wcc_data, f, indent=4)
