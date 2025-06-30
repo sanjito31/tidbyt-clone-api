@@ -12,12 +12,16 @@ def get_weather():
     open_weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=imperial"
 
     resp = requests.get(open_weather_url)
+
     weather = resp.json()
 
-    return {
-        "temp": str(round(weather["main"]["temp"])),
-        "feels_like": str(round(weather["main"]["feels_like"])),
-        "temp_max": str(round(weather["main"]["temp_max"])),
-        "temp_min": str(round(weather["main"]["temp_min"])),
-        "description": str(weather["weather"][0]["description"])
-    }
+    if resp.status_code == 200:
+        return {
+            "temp": str(round(weather["main"]["temp"])),
+            "feels_like": str(round(weather["main"]["feels_like"])),
+            "temp_max": str(round(weather["main"]["temp_max"])),
+            "temp_min": str(round(weather["main"]["temp_min"])),
+            "description": str(weather["weather"][0]["description"])
+        }
+    else:
+        return weather

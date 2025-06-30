@@ -1,3 +1,6 @@
+from logging import exception
+
+import requests
 from fastapi import FastAPI, Request, HTTPException
 from starlette.responses import RedirectResponse
 
