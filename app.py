@@ -1,8 +1,6 @@
-from logging import exception
-
-import requests
 from fastapi import FastAPI, Request, HTTPException
 from starlette.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 import spotify
 from mta import getMTA_realtime
@@ -10,6 +8,14 @@ from weather import get_weather
 import f1
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/api/mta")
 def mta_update():
