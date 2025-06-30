@@ -17,6 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/api/test")
+async def test():
+    return {"test": "this is a test api endpoint"}
+
 @app.get("/api/mta")
 def mta_update():
     return getMTA_realtime()
