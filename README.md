@@ -1,6 +1,6 @@
 # API for a Custom Made LED Information Panel
 
-Custom backend API for the LED information panel ```https://github.com/sanjito31/led_info_panel``` to get and display a variety of information for easy at-a-glance viewing.
+Custom backend API for the LED information panel ```https://github.com/sanjito31/led-info-panel``` to get and display a variety of information for easy at-a-glance viewing.
 
 ## Features
 - **Weather**: Locale specific weather information from OpenWeatherMap
