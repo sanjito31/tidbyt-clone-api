@@ -21,7 +21,7 @@ DIRECTIONS = {
 MY_LINES = [ "B", "D", "F", "M"]
 
 # def get_my_stops():
-#
+
 #     stops = pd.read_csv(ROUTES_CSV_PATH)
 #     my_stop_ids = tuple(MY_STATIONS.keys())
 #     my_stops = stops[stops['stop_id'].str.startswith(my_stop_ids)]

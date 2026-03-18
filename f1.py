@@ -1,10 +1,10 @@
-import requests, json
+import requests
 
 BASE_URL = "https://api.jolpi.ca/ergast/f1"
 def get_driver_standings():
 
     wdc = { "f1_drivers": [] }
-    resp = requests.get(BASE_URL + "/2025/driverstandings/")
+    resp = requests.get(BASE_URL + "/2026/driverstandings/")
     resp.raise_for_status()
 
     data = resp.json()["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]

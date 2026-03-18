@@ -69,7 +69,6 @@ def callback(request: Request) -> dict:
     state = request.query_params.get("state") if "state" in request.query_params else None
     error = request.query_params.get("error") if "error" in request.query_params else None
 
-    print(code)
     if code is None:
         return {
             "status": "error",

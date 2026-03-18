@@ -5,3 +5,7 @@ gtfs_subway
 .idea/
 .spotify_tokens.json
 misc
+checkerboard.py
+checkerboard.webp
+app.log
+.DS_Store

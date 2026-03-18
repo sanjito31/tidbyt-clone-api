@@ -1,13 +1,20 @@
 from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import FileResponse, Response
 from starlette.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from datetime import datetime
+import json
 
 import spotify
 from mta import getMTA_realtime
 from weather import get_weather
 import f1
+import clock
+
 
 app = FastAPI()
+PORT = 8000
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,6 +23,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+LOG_FILE = "app.log"
+
+class LogEntry(BaseModel):
+    message: str
+    time: datetime
+
+@app.get("/api/current")
+async def current():
+    # return FileResponse("checkerboard.webp", media_type="image/webp")
+    return Response(content=clock.draw_time(), media_type="image/webp")
+
+@app.post("/api/logs", status_code=201)
+async def logs(entry: LogEntry):
+    with open(LOG_FILE, "a") as f:
+        log = {
+            "message": entry.message,
+            "time": entry.time.isoformat()
+        }
+        f.write(json.dumps(log))
+    return {"status": "logged"}
+
 
 @app.get("/api/test")
 async def test():
@@ -67,3 +96,8 @@ def callback(request: Request):
 
     return RedirectResponse(f"/api/spotify/{resp["state"]}")
 
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    uvicorn.run("app:app", host="0.0.0.0", port=PORT, reload=True)
