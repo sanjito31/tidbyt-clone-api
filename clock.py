@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from datetime import datetime
+from pytz import timezone
 
 def draw_time():
 
@@ -9,13 +10,13 @@ def draw_time():
     fontsize = 12
     fg = (255, 255, 255)
 
-    text = datetime.now().strftime("%-I:%M%p")
+    text = datetime.now(timezone('US/Eastern')).strftime("%-I:%M%p")
 
     img = Image.new("RGB", (width, height))
     draw = ImageDraw.Draw(img)
 
     try:
-        font = ImageFont.truetype("/Library/Fonts/JetBrainsMonoNerdFontMono-Regular.ttf", fontsize)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/jetbrains-mono/JetBrainsMonoNL-Regular.ttf", fontsize)
     except OSError:
         font = ImageFont.load_default(fontsize)
 
@@ -27,3 +28,6 @@ def draw_time():
     buf = BytesIO()
     img.save(buf, "WEBP")
     return buf.getvalue()
+
+def get_time_str():
+    return datetime.now(timezone('US/Eastern')).strftime("%-I:%M%p")
