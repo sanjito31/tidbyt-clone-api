@@ -18,7 +18,7 @@ def draw_text(
     draw = ImageDraw.Draw(img)
 
     try:
-        font = ImageFont.truetype("./fonts/JetBrainsMonoNL-Regular.ttf", fontsize)
+        font = ImageFont.truetype("./fonts/JetBrainsMono/JetBrainsMonoNL-Regular.ttf", fontsize)
     except OSError:
         font = ImageFont.load_default(fontsize)
 
@@ -68,7 +68,7 @@ def draw_time(text: str,
     draw = ImageDraw.Draw(img)
 
     try:
-        font = ImageFont.truetype("./fonts/JetBrainsMonoNL-Bold.ttf", fontsize)
+        font = ImageFont.truetype("./fonts/JetBrainsMono/JetBrainsMonoNL-Bold.ttf", fontsize)
     except OSError:
         font = ImageFont.load_default(fontsize)
 
@@ -124,7 +124,7 @@ def draw_time(text: str,
 
     # Meridian
     if meridian_text == "PM":
-        p = Text("P", draw, font=ImageFont.truetype("./fonts/JetBrainsMonoNL-Thin.ttf", 4))
+        p = Text("P", draw, font=ImageFont.truetype("./fonts/JetBrainsMono/JetBrainsMonoNL-Thin.ttf", 4))
         draw.text(p.coords(width - h_space, height - v_space - minute.height), p.text, fill=fg)
 
 
@@ -173,7 +173,74 @@ class Text():
 def draw_weather(   weather: dict,
                     width: int = DISP_WIDTH,
                     height: int = DISP_HEIGHT,
-                    fontsize: int = 6,
+                    fontsize: int = 8,
+                    bg: tuple = (0, 0, 0),
+                    fg: tuple = (255, 255, 255),
+                    align: tuple = ('c', 'c')
+                ):
+    
+    # mask = Image.new("1", (DISP_WIDTH, DISP_HEIGHT), 0)
+    # draw = ImageDraw.Draw(mask)
+    
+    
+    img = Image.new("RGB", (width, height))
+    draw = ImageDraw.Draw(img)
+
+    try:
+        # font = ImageFont.truetype("./fonts/JetBrainsMono/JetBrainsMonoNL-Regular.ttf", fontsize)
+        font = ImageFont.truetype("./fonts/early_gameboy.ttf", fontsize, layout_engine=ImageFont.Layout.BASIC)
+    except Exception as e:
+        font = ImageFont.load_default()
+
+    temp = Text(weather["temp"]+"F", draw, font)
+    description = Text(weather["description"], draw, font)
+
+    margin = 2
+
+    # then apply color
+    # img = Image.new("RGB", (DISP_WIDTH, DISP_HEIGHT), bg)
+    # img.paste(Image.new("RGB", img.size, fg), mask=mask)
+    
+    # icon = Image.open("./assets/weather/cloud.png").convert("RGBA")
+    # icon = icon.resize((24, 24))
+
+    # color = Image.new("RGBA", icon.size, (255, 255, 255, 255))
+    # color.putalpha(icon.getchannel("A"))
+
+    # img.paste(color, (0, 0), mask=color)
+
+
+    # yellow = (255, 255, 0)
+
+    # draw.circle((2, 2), 10, fill=yellow, outline=yellow)
+    # draw.line([(2, 14), (2, 18)], fill=yellow)
+    # draw.line([(14, 2), (18, 2)], fill=yellow)
+
+    # def sun_rays(angle, length):
+    #     x = length * sin(radians(angle)) + 2
+    #     y = length * -cos(radians(angle)) + 2
+    #     return x, y
+
+    # draw.line([(sun_rays(25+90, 14)), (sun_rays(25+90, 18))], fill=yellow)
+    # draw.line([(sun_rays(45+90, 14)), (sun_rays(45+90, 18))], fill=yellow)
+    # draw.line([(sun_rays(65+90, 14)), (sun_rays(65+90, 18))], fill=yellow)
+    
+    draw.text(description.coords(width-1-margin-description.width, height-1-margin-description.height), description.text, font=font, fill=fg)
+    # draw.text(description.coords(0, 0), description.text, font=font, fill=1)
+
+    draw.text(temp.coords(width-1-margin-temp.width, height-1-(2*margin)-temp.height-description.height), temp.text, font=font, fill=fg)
+    # draw.text(temp.coords(0, 15), temp.text, font=font, fill=1)
+
+
+    buf = BytesIO()
+    img.save(buf, "WEBP")
+    return buf.getvalue()
+
+
+def draw_flight(flights: dict,
+                    width: int = DISP_WIDTH,
+                    height: int = DISP_HEIGHT,
+                    fontsize: int = 8,
                     bg: tuple = (0, 0, 0),
                     fg: tuple = (255, 255, 255),
                     align: tuple = ('c', 'c')
@@ -183,38 +250,22 @@ def draw_weather(   weather: dict,
     draw = ImageDraw.Draw(img)
 
     try:
-        font = ImageFont.truetype("./fonts/JetBrainsMonoNL-Regular.ttf", fontsize)
-    except OSError:
-        font = ImageFont.load_default(fontsize)
+        font = ImageFont.truetype("./fonts/Minecraft.ttf", fontsize, layout_engine=ImageFont.Layout.BASIC)
+    except Exception as e:
+        font = ImageFont.load_default()
 
-    temp = Text(weather["temp"]+"F", draw, font)
-    temp.x_off = temp.x_off + 2
-    temp.y_off = temp.y_off + 1
-    description = Text(weather["description"], draw, font)
+    no = Text(flights["flight_no"], draw, font)
+    airline = Text(flights["airline"], draw, font)
+    origin = Text(flights["origin"]["code"], draw, font)
+    dest = Text(flights["destination"]["code"], draw, font)
 
     margin = 2
 
+    draw.text(airline.coords(margin, margin), airline.text, font=font, fill=fg)
+    draw.text(no.coords(margin, (2*margin)+airline.height), no.text, font=font, fill=fg)
     
-    draw.text(description.coords(margin, height-description.height-margin), description.text, fill=fg)
-
-    draw.text(temp.coords(width-temp.width-margin, height-temp.height-margin), temp.text, fill=fg)
-    
-    if description.text is "sunny" or "clear sky":
-    
-        yellow = (255, 255, 0)
-
-        draw.circle((2, 2), 10, fill=yellow, outline=yellow)
-        draw.line([(2, 14), (2, 18)], fill=yellow)
-        draw.line([(14, 2), (18, 2)], fill=yellow)
-
-        def sun_rays(angle, length):
-            x = length * sin(radians(angle)) + 2
-            y = length * -cos(radians(angle)) + 2
-            return x, y
-
-        draw.line([(sun_rays(25+90, 14)), (sun_rays(25+90, 18))], fill=yellow)
-        draw.line([(sun_rays(45+90, 14)), (sun_rays(45+90, 18))], fill=yellow)
-        draw.line([(sun_rays(65+90, 14)), (sun_rays(65+90, 18))], fill=yellow)
+    draw.text(origin.coords(margin, (3*margin)+airline.height+no.height), origin.text, font=font, fill=fg)
+    draw.text(dest.coords(margin+origin.width+4, (3*margin)+airline.height+no.height), dest.text, font=font, fill=fg)
 
     buf = BytesIO()
     img.save(buf, "WEBP")

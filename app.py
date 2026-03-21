@@ -11,7 +11,8 @@ from clock import get_time_str
 from carousel import AppCarousel
 from apps.TimeApp import TimeApp
 from apps.WeatherApp import WeatherApp
-from utils.draw import draw_time, draw_weather
+from apps.PlaneApp import PlaneApp
+from utils.draw import draw_time, draw_weather, draw_flight
 
 from config import settings
 
@@ -44,14 +45,19 @@ async def test():
     # app_index = (app_index + 1) % num_apps
     # return res
 
-    return Response(content=draw_weather({"temp": "54", "description": "sunny"}), media_type="image/webp")
+    return Response(content=draw_flight({"flight_no": "AA245", 
+                                          "airline": "American", 
+                                          "origin": {"code": "EWR"}, 
+                                          "destination": {"code": "LHR"}
+                                          }), media_type="image/webp")
 
 # ----------------------------------------------
 # Main Current Frame Endpoint
 # ----------------------------------------------
 
 carousel = AppCarousel([TimeApp(), 
-                        WeatherApp(lat=settings.LAT, lon=settings.LON, api_key=settings.OPEN_WEATHER_API_KEY)
+                        WeatherApp(lat=settings.LAT, lon=settings.LON, api_key=settings.OPEN_WEATHER_API_KEY),
+                        PlaneApp()
                         ])
 
 @app.get("/api/current")

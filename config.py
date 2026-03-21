@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     LAT: str
     LON: str
 
+    LOMAX: float
+    LOMIN: float
+    LATMIN: float
+    LATMAX: float
+
     # Spotify
     SPOTIFY_CLIENT_ID: str | None
     SPOTIFY_CLIENT_SECRET: str | None
